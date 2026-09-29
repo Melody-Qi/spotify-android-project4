@@ -100,5 +100,20 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.4")
 
+    // ---------- Lesson 58: Room (local database)
+    //   Lesson pins 2.4.3 with kapt. Two adaptations for this project (same story as
+    //   Hilt/Safe Args):
+    //   1. kapt -> ksp : kapt is legacy, the project already runs KSP for Hilt and
+    //      Room 2.7+ generates its code through KSP2 (Kotlin 2.2.10 compatible).
+    //   2. 2.4.3 -> 2.8.5 : Room 2.4.x predates KSP2 and would not compile on this
+    //      Kotlin. 2.8.5 is the current stable with identical @Entity/@Dao/@Database APIs.
+    //   room-runtime : the annotations (@Entity/@Dao/@Database) + Room class
+    //   room-ktx     : coroutine support (suspend DAO functions, Flow support)
+    //   room-compiler: build time only -> ksp(...), generates the DAO/DB implementations
+    val roomVersion = "2.8.5"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
+
     testImplementation("junit:junit:4.13.2")
 }

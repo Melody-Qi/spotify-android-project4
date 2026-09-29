@@ -1,5 +1,7 @@
 package com.laioffer.spotify.datamodel
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
@@ -13,9 +15,20 @@ import java.io.Serializable
  * Serializable lets a whole Album travel inside a navigation Bundle (that is how a
  * detail screen would receive an album later); empty() is the placeholder (id = -1)
  * used when there is nothing to show yet.
+ *
+ * Lesson 58 - Album is now ALSO a Room entity (screenshot 11): @Entity marks the class
+ * as a table (table name = "Album") and @PrimaryKey marks `id` as the row key. Room
+ * maps every remaining property to a column with the same name, so the table looks like:
+ *
+ *   Album(id INTEGER PRIMARY KEY, name TEXT, year TEXT, cover TEXT,
+ *         artists TEXT, description TEXT)
+ *
+ * One class, three roles: Gson model (network) + navigation payload (Serializable)
+ * + Room row (local database).
  */
+@Entity
 data class Album(
-    val id: Int,
+    @PrimaryKey val id: Int,
     @SerializedName("album") val name: String,
     val year: String,
     val cover: String,

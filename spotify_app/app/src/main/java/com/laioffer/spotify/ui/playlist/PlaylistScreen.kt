@@ -1,6 +1,8 @@
 package com.laioffer.spotify.ui.playlist
 
+import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -59,14 +61,21 @@ fun PlaylistScreen(playlistViewModel: PlaylistViewModel) {
     // Lesson 57, screenshot 48: StateFlow -> Compose State, identical to HomeScreen.
     val playlistUiState by playlistViewModel.uiState.collectAsState()
 
+    // Lesson 58, screenshots 25: the tap event lands here and is FORWARDED to the
+    // ViewModel - View layer only logs + delegates, no logic (the MVVM contract).
     PlaylistScreenContent(
-        playlistUiState = playlistUiState
+        playlistUiState = playlistUiState,
+        onTapFavorite = {
+            Log.d("PlaylistScreen", "Tap favorite $it")
+            playlistViewModel.toggleFavorite(it)
+        }
     )
 }
 
 @Composable
 private fun PlaylistScreenContent(
-    playlistUiState: PlaylistUiState
+    playlistUiState: PlaylistUiState,
+    onTapFavorite: (Boolean) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -74,7 +83,8 @@ private fun PlaylistScreenContent(
     ) {
         Cover(
             album = playlistUiState.album,
-            isFavorite = playlistUiState.isFavorite
+            isFavorite = playlistUiState.isFavorite,
+            onTapFavorite = onTapFavorite
         )
 
         // Lesson 57, screenshot 58: the middle component (screenshot 47's yellow box).
@@ -88,7 +98,8 @@ private fun PlaylistScreenContent(
 @Composable
 private fun Cover(
     album: Album,
-    isFavorite: Boolean
+    isFavorite: Boolean,
+    onTapFavorite: (Boolean) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -98,10 +109,16 @@ private fun Cover(
         ) {
             // Lesson 57, screenshots 50-52: the heart in the top-right corner. The icon
             // AND its tint both switch on isFavorite - green heart vs gray outline.
+            // Lesson 58, screenshot 3: .clickable { onTapFavorite(!isFavorite) } - the
+            // callback reports the NEW state (toggling the current one), which travels
+            // up: Cover -> PlaylistScreenContent -> PlaylistScreen -> ViewModel.
             Icon(
                 modifier = Modifier
                     .size(28.dp)
-                    .align(Alignment.TopEnd),
+                    .align(Alignment.TopEnd)
+                    .clickable {
+                        onTapFavorite(!isFavorite)
+                    },
                 painter = painterResource(
                     id = if (isFavorite) {
                         R.drawable.ic_favorite_24
@@ -263,7 +280,8 @@ fun PlaylistScreenPreview() {
                     Song("HEXAGONAL (Intro)", "Bizzy", "", "3:47"),
                     Song("Carousel", "Gary", "", "4:13")
                 )
-            )
+            ),
+            onTapFavorite = { }
         )
     }
 }

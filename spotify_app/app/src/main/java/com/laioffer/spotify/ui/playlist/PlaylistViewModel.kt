@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.laioffer.spotify.datamodel.Album
 import com.laioffer.spotify.datamodel.Song
+import com.laioffer.spotify.repository.FavoriteAlbumRepository
 import com.laioffer.spotify.repository.PlaylistRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,8 +18,8 @@ import javax.inject.Inject
  * Lesson 57, screenshots 43-45 - one snapshot of the playlist page.
  *
  *   album       = the album this page shows (arrived via navigation, Lesson 57 step 8)
- *   isFavorite  = heart state (the MVVM diagram's right half: toggling favorites - the
- *                 wiring comes in a later lesson, so it starts as `false`)
+ *   isFavorite  = heart state; since Lesson 58 it is DRIVEN by the Room database (a Flow
+ *                 subscription in fetchPlaylist), not a plain field anymore
  *   playlist    = the track list fetched from /playlist/{id}, empty until loaded
  */
 data class PlaylistUiState(
@@ -49,7 +50,9 @@ data class PlaylistUiState(
  */
 @HiltViewModel
 class PlaylistViewModel @Inject constructor(
-    private val playlistRepository: PlaylistRepository
+    private val playlistRepository: PlaylistRepository,
+    // Lesson 58, screenshot 22: the local-data side of the MVVM diagram joins the party.
+    private val favoriteAlbumRepository: FavoriteAlbumRepository
 ) : ViewModel() {
 
     // The initial state carries an "empty" Album (id = -1): the real one arrives with
@@ -82,6 +85,33 @@ class PlaylistViewModel @Inject constructor(
                 // backend must not crash the page - keep the album, just show no songs.
                 Log.w(TAG, "fetchPlaylist failed: ${t.javaClass.simpleName}: ${t.message}")
                 _uiState.value = _uiState.value.copy(playlist = emptyList())
+            }
+        }
+
+        // Lesson 58, screenshot 22: a SECOND coroutine in the same viewModelScope - the
+        // two run in parallel. One fetches the track list over the network, the other
+        // asks the local database whether this album was favorited before. collect {}
+        // re-fires on every table change, so the heart also UN-lights the moment the
+        // row is deleted.
+        viewModelScope.launch {
+            favoriteAlbumRepository.isFavoriteAlbum(album.id).collect { isFavorite ->
+                _uiState.value = _uiState.value.copy(isFavorite = isFavorite)
+            }
+        }
+    }
+
+    /**
+     * Lesson 58, screenshot 24: the write path behind the heart tap. if/else on the NEW
+     * state (Cover already calls onTapFavorite(!isFavorite)) -> insert or delete the row.
+     * Both are suspend repository calls, so it must run inside a coroutine.
+     */
+    fun toggleFavorite(isFavorite: Boolean) {
+        val album = _uiState.value.album
+        viewModelScope.launch {
+            if (isFavorite) {
+                favoriteAlbumRepository.favoriteAlbum(album)
+            } else {
+                favoriteAlbumRepository.unFavoriteAlbum(album)
             }
         }
     }

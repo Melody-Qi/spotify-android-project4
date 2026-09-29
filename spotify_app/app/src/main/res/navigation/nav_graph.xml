@@ -21,9 +21,7 @@
     <fragment
         android:id="@+id/favoriteFragment"
         android:name="com.laioffer.spotify.ui.favorite.FavoriteFragment"
-        android:label="@string/menu_favorite"
-        tools:layout="@layout/fragment_favorite"
-        xmlns:tools="http://schemas.android.com/tools">
+        android:label="@string/menu_favorite">
         <action
             android:id="@+id/action_favoriteFragment_to_playlistFragment"
             app:destination="@id/playlistFragment" />
