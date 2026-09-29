@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- No action bar: the lesson's layout puts the bottom nav directly under the
+         FragmentContainerView, and the app is all-black like Spotify. -->
+    <style name="Theme.Spotify" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryVariant">@color/black</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="android:windowBackground">@color/black</item>
+    </style>
+</resources>

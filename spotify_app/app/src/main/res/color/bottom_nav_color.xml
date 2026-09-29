@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lesson 54, step 7. A *color* selector: the bottom nav uses it for both
+  itemIconTint and itemTextColor, so the selected tab is white and the other is grey.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/white" android:state_checked="true" />
+    <item android:color="@color/gray_60" android:state_checked="false" />
+</selector>

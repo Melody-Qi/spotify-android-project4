@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Lesson 54, step 9: the navigation graph (NavHost + destinations). -->
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.laioffer.spotify.ui.home.HomeFragment"
+        android:label="@string/menu_home" />
+
+    <fragment
+        android:id="@+id/favoriteFragment"
+        android:name="com.laioffer.spotify.ui.favorite.FavoriteFragment"
+        android:label="@string/menu_favorite"
+        tools:layout="@layout/fragment_favorite"
+        xmlns:tools="http://schemas.android.com/tools" />
+
+</navigation>

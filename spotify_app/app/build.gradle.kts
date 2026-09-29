@@ -1,0 +1,97 @@
+plugins {
+    id("com.android.application")
+
+    // Lesson 55 - Hilt. Both ids are declared (with versions) in the root build file.
+    id("com.google.dagger.hilt.android")
+    id("com.google.devtools.ksp")
+
+    // Lesson 56 - Compose. The compiler plugin version is fixed to the Kotlin that
+    // AGP 9.4.1 ships (2.2.10); do not bump it independently.
+    id("org.jetbrains.kotlin.plugin.compose")
+}
+
+android {
+    namespace = "com.laioffer.spotify"
+    compileSdk = 37
+
+    defaultConfig {
+        applicationId = "com.laioffer.spotify"
+        minSdk = 24
+        targetSdk = 37
+        versionCode = 1
+        versionName = "1.0"
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+        }
+    }
+
+    // Kotlin support is built into AGP 9 - no kotlin-android plugin, and JVM target is
+    // kept in sync with the Java level automatically.
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    // Lesson 56 - Compose is enabled for the Home screen (hosted inside HomeFragment
+    // via ComposeView). The Compose compiler version is supplied by the
+    // org.jetbrains.kotlin.plugin.compose plugin above; no kotlinCompilerExtensionVersion.
+    buildFeatures {
+        compose = true
+    }
+}
+
+dependencies {
+    // ---------- Lesson 53: "android xml library" (pre-installed in the lesson template)
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
+    implementation("androidx.recyclerview:recyclerview:1.4.0")
+    implementation("androidx.core:core-ktx:1.16.0")
+
+    // ---------- Lesson 54: Bottom Navigation (the versions the lesson gives)
+    //   def nav_version = "2.5.3"
+    //   implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    //   implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+    val navVersion = "2.5.3"
+    implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
+    implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
+
+    // ---------- Lesson 54: Network with Retrofit (lesson uses 2.9.0)
+    val retrofitVersion = "2.9.0"
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
+
+    // ---------- Lesson 56: Compose (Material 2, matching the lesson's
+    // MaterialTheme(colors = darkColors())).
+    val composeBom = "androidx.compose:compose-bom:2026.09.00"
+    implementation(platform(composeBom))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.material:material")
+    implementation("androidx.compose.foundation:foundation")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+
+    // ---------- Lesson 56: images inside Compose. coil-compose 2.2.2 brings coil core
+    // (used by MainApplication's Coil.setImageLoader global UA interceptor) transitively,
+    // so the plain io.coil-kt:coil line from Lesson 53 is no longer needed on its own.
+    implementation("io.coil-kt:coil-compose:2.2.2")
+
+    // ---------- Lesson 55: Hilt
+    //   hilt-android          : the runtime annotations (@HiltAndroidApp, @Inject, @Module ...)
+    //   hilt-android-compiler : build time only -> ksp(...), never shipped in the APK
+    implementation("com.google.dagger:hilt-android:2.60.1")
+    ksp("com.google.dagger:hilt-android-compiler:2.60.1")
+
+    // ---------- Lesson 55: MVVM (lifecycle)
+    //   lifecycle-viewmodel-ktx : ViewModel + viewModelScope
+    //   lifecycle-runtime-ktx   : lifecycleScope / repeatOnLifecycle (kept for parity;
+    //                             HomeScreen observes uiState via collectAsState instead)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.4")
+
+    testImplementation("junit:junit:4.13.2")
+}

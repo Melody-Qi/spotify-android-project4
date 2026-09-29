@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "songs": [
+      { "name": "HEXAGONAL (Intro)", "lyric": "Bizzy", "src": "http://10.0.2.2:8080/songs/LeeSSang_Hexagonal.mp3", "length": "3'47" },
+      { "name": "Let's Meet Now", "lyric": "Gary, Jang Gi-ha", "src": "http://10.0.2.2:8080/songs/LeeSSang_Let_s_Meet_Now.mp3", "length": "3'34" },
+      { "name": "The Woman Who Can't Break Up, The Man Who Can't Leave", "lyric": "Gary", "src": "http://10.0.2.2:8080/songs/LeeSSang_Can_t_Breakup_Girl_Can_t_Breakaway_Boy.mp3", "length": "4'44" },
+      { "name": "Carousel", "lyric": "Gary", "src": "http://10.0.2.2:8080/songs/LeeSSang_Carousel.mp3", "length": "4'13" },
+      { "name": "행복하지아니한가", "lyric": "Gary, Kim Chang-ki", "src": "http://10.0.2.2:8080/songs/LeeSSang_Chanhyuk.mp3", "length": "4'13" },
+      { "name": "Run", "lyric": "Gary", "src": "http://10.0.2.2:8080/songs/LeeSSang_Run.mp3", "length": "3'56" }
+    ]
+  },
+  {
+    "id": 2,
+    "songs": [
+      { "name": "夜的第七章", "lyric": "Along Huang", "src": "http://10.0.2.2:8080/songs/夜的第七章.mp3", "length": "3'48" },
+      { "name": "听妈妈的话", "lyric": "Jay Chou", "src": "http://10.0.2.2:8080/songs/听妈妈的话.mp3", "length": "3'54" }
+    ]
+  }
+]

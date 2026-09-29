@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Lesson 54, step 4 of the network section.
+  The backend is plain http, but Android 9+ blocks cleartext traffic by default
+  (the crash in the lesson: "CLEARTEXT communication to 10.0.2.2 not permitted").
+  We only whitelist the emulator's alias for the host machine - never "*".
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">10.0.2.2</domain>
+    </domain-config>
+</network-security-config>

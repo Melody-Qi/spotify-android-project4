@@ -1,0 +1,21 @@
+# ---------- Root-level dev artifacts (not part of the project) ----------
+*.log
+_archive/
+backend.log
+build-backend.log
+emu.log
+install-dist.log
+run-backend.log
+verify-backend.txt
+l55_backend.png
+view_home.png
+view_home_v2.png
+
+# ---------- Android / Gradle ----------
+local.properties
+.gradle/
+build/
+.idea/
+.kotlin/
+*.iml
+.DS_Store

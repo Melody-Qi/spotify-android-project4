@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Spotify</string>
+
+    <!-- Lesson 54, step 5: "add bottomNavigation item name" -->
+    <string name="menu_home">Home</string>
+    <string name="menu_favorite">Favorite</string>
+
+    <string name="home_loading">Loading… Fetching today\'s feed…</string>
+    <string name="home_error">Could not load the feed. Is spotify_backend running on port 8080?</string>
+    <string name="screen_loading">Screen is loading...</string>
+    <string name="favorite_placeholder">Favorite</string>
+</resources>
