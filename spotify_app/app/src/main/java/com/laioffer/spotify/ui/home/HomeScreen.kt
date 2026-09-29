@@ -1,5 +1,6 @@
 package com.laioffer.spotify.ui.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,19 +53,23 @@ import com.laioffer.spotify.datamodel.Section
  * *what to draw for each state*. It holds no state of its own (stateless / hoisted),
  * which keeps it reusable and testable - the Compose version of the MVVM one-way
  * data flow (state down, events up).
+ *
+ * Lesson 57 adds one thread through the whole tree: `onTap: (Album) -> Unit`.
+ * The event flows UP (album click -> ... -> HomeFragment -> navigate), the state
+ * flows DOWN (uiState) - together they form the complete one-way data flow.
  */
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel) {
+fun HomeScreen(viewModel: HomeViewModel, onTap: (Album) -> Unit) {
     // Lesson 56, screenshot 21: the single most important line. StateFlow -> Compose
     // State, so every new value the ViewModel emits re-composes this tree.
     // (The View-system equivalent was repeatOnLifecycle(STARTED) { uiState.collect {} }.)
     val uiState by viewModel.uiState.collectAsState()
-    HomeScreenContent(uiState = uiState)
+    HomeScreenContent(uiState = uiState, onTap = onTap)
 }
 
 @Composable
-fun HomeScreenContent(uiState: HomeUiState) {
+fun HomeScreenContent(uiState: HomeUiState, onTap: (Album) -> Unit) {
     LazyColumn(modifier = Modifier.padding(16.dp)) {
         item { HomeScreenHeader() }
         when {
@@ -74,7 +79,8 @@ fun HomeScreenContent(uiState: HomeUiState) {
             }
             else -> {
                 // Lesson 56, screenshot 31: one AlbumSection per feed section.
-                items(uiState.feed) { section -> AlbumSection(section = section) }
+                // Lesson 57: forward the tap event to every section unchanged.
+                items(uiState.feed) { section -> AlbumSection(section = section, onTap = onTap) }
             }
         }
     }
@@ -93,7 +99,7 @@ fun HomeScreenHeader() {
 }
 
 @Composable
-fun AlbumSection(section: Section) {
+fun AlbumSection(section: Section, onTap: (Album) -> Unit) {
     Column {
         Text(
             text = section.sectionTitle,
@@ -105,14 +111,20 @@ fun AlbumSection(section: Section) {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             // Lesson 56, screenshot 33: items() needs the androidx.compose.foundation.lazy.items import.
-            items(section.albums) { album -> AlbumCover(album = album) }
+            // Lesson 57, screenshot 03: hand the callback to each cover.
+            items(section.albums) { album -> AlbumCover(album = album, onTap = onTap) }
         }
     }
 }
 
 @Composable
-fun AlbumCover(album: Album) {
-    Column {
+fun AlbumCover(album: Album, onTap: (Album) -> Unit) {
+    // Lesson 57, screenshot 03: clickable on the Column makes the whole card tappable;
+    // onTap(album) hands the *specific* album of this card back to the caller.
+    // In Kotlin, `onTap: (Album) -> Unit` is just a function value - equivalent to
+    // `fun onTap(album: Album) {}` - and `Modifier.clickable { onTap(album) }` runs it
+    // whenever the Column is clicked.
+    Column(modifier = Modifier.clickable { onTap(album) }) {
         Box(modifier = Modifier.size(160.dp)) {
             // Lesson 56, screenshot 36: same Wikimedia 403 fix we already applied globally
             // in MainApplication - a browser-like User-Agent is required, otherwise the
@@ -172,7 +184,9 @@ fun HomeScreenPreview() {
                     )
                 ),
                 isLoading = false
-            )
+            ),
+            // Lesson 57: previews have nowhere to navigate, so a no-op lambda is enough.
+            onTap = {}
         )
     }
 }

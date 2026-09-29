@@ -23,4 +23,10 @@ plugins {
     // Lesson 56 - Compose. The compiler plugin version MUST match the Kotlin that AGP
     // 9.4.1 ships (2.2.10); the compose compiler is aligned automatically from it.
     id("org.jetbrains.kotlin.plugin.compose") version "2.2.10" apply false
+
+    // Lesson 57 - Safe Args: generates type-safe Directions/Args classes from
+    // res/navigation/nav_graph.xml. The lesson pins 2.5.3, but that plugin predates
+    // AGP 9 (same story as Hilt 2.57: it talks to APIs removed in AGP 9), so the
+    // modern 2.10.2 is used instead - identical generated code, working variant API.
+    id("androidx.navigation.safeargs") version "2.10.2" apply false
 }

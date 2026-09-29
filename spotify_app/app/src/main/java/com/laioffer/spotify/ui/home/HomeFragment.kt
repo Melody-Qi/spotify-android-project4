@@ -1,6 +1,7 @@
 package com.laioffer.spotify.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import androidx.compose.material.darkColors
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -26,6 +28,16 @@ import dagger.hilt.android.AndroidEntryPoint
  *     collectAsState() and re-composes itself.
  *
  * The old XML layout and RecyclerView adapter are archived under _archive/home_lesson54_view/.
+ *
+ * Lesson 57, screenshots 25-26: the onTap lambda now really navigates. The flow:
+ *
+ *   AlbumCover click -> onTap(album) -> ... -> this lambda ->
+ *   HomeFragmentDirections.actionHomeFragmentToPlaylistFragment(album)  (Safe Args)
+ *   findNavController().navigate(direction)
+ *
+ * findNavController() works here because the whole call sits inside the ComposeView's
+ * `apply {}` block - the receiver IS a View, and androidx.navigation.findNavController(View)
+ * walks up the hierarchy until it finds the NavHostFragment.
  */
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -40,7 +52,15 @@ class HomeFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 MaterialTheme(colors = darkColors()) {
-                    HomeScreen(viewModel)
+                    HomeScreen(viewModel, onTap = { album ->
+                        // Lesson 57 step 8: Safe Args - the generated Directions class
+                        // (named after the SOURCE fragment) refuses to navigate without
+                        // the mandatory Album argument.
+                        val direction =
+                            HomeFragmentDirections.actionHomeFragmentToPlaylistFragment(album)
+                        findNavController().navigate(direction)
+                        Log.d(TAG, "We tapped ${album.name}")
+                    })
                 }
             }
         }
@@ -54,5 +74,9 @@ class HomeFragment : Fragment() {
         if (viewModel.uiState.value.isLoading) {
             viewModel.fetchHomeScreen()
         }
+    }
+
+    private companion object {
+        const val TAG = "HomeFragment"
     }
 }

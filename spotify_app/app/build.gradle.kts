@@ -8,6 +8,11 @@ plugins {
     // Lesson 56 - Compose. The compiler plugin version is fixed to the Kotlin that
     // AGP 9.4.1 ships (2.2.10); do not bump it independently.
     id("org.jetbrains.kotlin.plugin.compose")
+
+    // Lesson 57 - Safe Args (Java variant, exactly the id the lesson uses).
+    // Generates HomeFragmentDirections / PlaylistFragmentArgs from nav_graph.xml,
+    // so navigating with an Album argument is checked at compile time.
+    id("androidx.navigation.safeargs")
 }
 
 android {
@@ -55,7 +60,9 @@ dependencies {
     //   def nav_version = "2.5.3"
     //   implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     //   implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
-    val navVersion = "2.5.3"
+    // Lesson 57: bumped 2.5.3 -> 2.10.2 to match the Safe Args plugin (the 2.5.3
+    // plugin cannot run on AGP 9); 2.10.2 keeps the same NavigationUI/NavHostFragment APIs.
+    val navVersion = "2.10.2"
     implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
     implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
     implementation("androidx.fragment:fragment-ktx:1.6.2")

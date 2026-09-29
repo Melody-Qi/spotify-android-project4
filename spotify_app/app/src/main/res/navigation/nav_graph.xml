@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Lesson 54, step 9: the navigation graph (NavHost + destinations). -->
+<!-- Lesson 57: adds the playlistFragment destination. Its <argument> declares that
+     every navigation to this screen must carry an Album, and the two <action>s
+     (dragged home->playlist and favorite->playlist in the editor) are what the Safe
+     Args plugin turns into HomeFragmentDirections.actionHomeFragmentToPlaylistFragment(album). -->
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
@@ -8,13 +12,30 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.laioffer.spotify.ui.home.HomeFragment"
-        android:label="@string/menu_home" />
+        android:label="@string/menu_home">
+        <action
+            android:id="@+id/action_homeFragment_to_playlistFragment"
+            app:destination="@id/playlistFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/favoriteFragment"
         android:name="com.laioffer.spotify.ui.favorite.FavoriteFragment"
         android:label="@string/menu_favorite"
         tools:layout="@layout/fragment_favorite"
-        xmlns:tools="http://schemas.android.com/tools" />
+        xmlns:tools="http://schemas.android.com/tools">
+        <action
+            android:id="@+id/action_favoriteFragment_to_playlistFragment"
+            app:destination="@id/playlistFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/playlistFragment"
+        android:name="com.laioffer.spotify.ui.playlist.PlaylistFragment"
+        android:label="PlaylistFragment">
+        <argument
+            android:name="album"
+            app:argType="com.laioffer.spotify.datamodel.Album" />
+    </fragment>
 
 </navigation>

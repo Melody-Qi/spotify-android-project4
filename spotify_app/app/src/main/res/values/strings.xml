@@ -10,4 +10,9 @@
     <string name="home_error">Could not load the feed. Is spotify_backend running on port 8080?</string>
     <string name="screen_loading">Screen is loading...</string>
     <string name="favorite_placeholder">Favorite</string>
+
+    <!-- Lesson 57: "Lesssang • 2008" under the playlist title. Two substitutions, so
+         the positional %1$s / %2$s form is mandatory (aapt rejects non-positional
+         formats with more than one argument). -->
+    <string name="album_info">%1$s • %2$s</string>
 </resources>
