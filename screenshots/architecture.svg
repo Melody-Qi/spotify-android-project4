@@ -1,0 +1,76 @@
+<svg viewBox="0 0 680 456" width="680" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>Spotify App MVVM architecture</title>
+<desc>Four layers: Compose screens, ViewModels with StateFlow, Repositories and ExoPlayer module, data sources Ktor backend and Room.</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M2 1L8 5L2 9" fill="none" stroke="#888780" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</marker>
+</defs>
+<rect x="0" y="0" width="680" height="456" fill="#FFFFFF"/>
+<text x="40" y="26" font-family="system-ui, sans-serif" font-size="14" font-weight="500" fill="#2C2C2A">Spotify App — MVVM architecture</text>
+<g>
+<rect x="40" y="44" width="140" height="56" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+<text x="110" y="68" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="13" font-weight="500" fill="#27500A">HomeScreen</text>
+<text x="110" y="86" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="12" fill="#3B6D11">feed · 3 sections</text>
+<rect x="193" y="44" width="140" height="56" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+<text x="263" y="68" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="13" font-weight="500" fill="#27500A">PlaylistScreen</text>
+<text x="263" y="86" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="12" fill="#3B6D11">vinyl · song list</text>
+<rect x="347" y="44" width="140" height="56" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+<text x="417" y="68" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="13" font-weight="500" fill="#27500A">FavoriteScreen</text>
+<text x="417" y="86" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="12" fill="#3B6D11">saved albums</text>
+<rect x="500" y="44" width="140" height="56" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+<text x="570" y="68" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="13" font-weight="500" fill="#27500A">PlayerBar</text>
+<text x="570" y="86" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="12" fill="#3B6D11">floats over nav host</text>
+</g>
+<path d="M110 100 L110 152" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M263 100 L263 152" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M417 100 L417 152" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M570 100 L570 152" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<g>
+<rect x="40" y="156" width="140" height="56" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+<text x="110" y="180" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="13" font-weight="500" fill="#27500A">HomeViewModel</text>
+<text x="110" y="198" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="12" fill="#3B6D11">by viewModels()</text>
+<rect x="193" y="156" width="140" height="56" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+<text x="263" y="180" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="13" font-weight="500" fill="#27500A">PlaylistViewModel</text>
+<text x="263" y="198" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="12" fill="#3B6D11">by viewModels()</text>
+<rect x="347" y="156" width="140" height="56" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+<text x="417" y="180" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="13" font-weight="500" fill="#27500A">FavoriteViewModel</text>
+<text x="417" y="198" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="12" fill="#3B6D11">by viewModels()</text>
+<rect x="500" y="156" width="140" height="56" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+<text x="570" y="180" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="13" font-weight="500" fill="#27500A">PlayerViewModel</text>
+<text x="570" y="198" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="12" fill="#3B6D11">activity-scoped</text>
+</g>
+<path d="M110 212 L110 264" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M263 212 L263 264" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M417 212 L417 264" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M570 212 L570 264" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<g>
+<rect x="40" y="268" width="140" height="56" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+<text x="110" y="292" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="13" font-weight="500" fill="#27500A">HomeRepository</text>
+<text x="110" y="310" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="12" fill="#3B6D11">home feed</text>
+<rect x="193" y="268" width="140" height="56" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+<text x="263" y="292" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="13" font-weight="500" fill="#27500A">PlaylistRepository</text>
+<text x="263" y="310" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="12" fill="#3B6D11">album songs</text>
+<rect x="347" y="268" width="140" height="56" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+<text x="417" y="292" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="13" font-weight="500" fill="#27500A">FavoriteRepo</text>
+<text x="417" y="310" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="12" fill="#3B6D11">favorites</text>
+<rect x="500" y="268" width="140" height="56" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+<text x="570" y="292" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="13" font-weight="500" fill="#27500A">PlayerModule</text>
+<text x="570" y="310" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="12" fill="#3B6D11">@Singleton player</text>
+</g>
+<path d="M110 324 L128 376" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M263 324 L170 376" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M417 324 L355 376" fill="none" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M570 324 C570 356 220 350 150 376" fill="none" stroke="#888780" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
+<g>
+<rect x="40" y="380" width="190" height="56" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text x="135" y="404" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="13" font-weight="500" fill="#0C447C">Ktor backend</text>
+<text x="135" y="422" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="12" fill="#185FA5">:8080 feed·playlists·mp3</text>
+<rect x="245" y="380" width="190" height="56" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text x="340" y="404" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="13" font-weight="500" fill="#0C447C">Room · SQLite</text>
+<text x="340" y="422" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="12" fill="#185FA5">favorite albums</text>
+<rect x="450" y="380" width="190" height="56" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text x="545" y="404" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="13" font-weight="500" fill="#0C447C">Wikimedia</text>
+<text x="545" y="422" text-anchor="middle" dominant-baseline="central" font-family="system-ui, sans-serif" font-size="12" fill="#185FA5">covers via coil</text>
+</g>
+</svg>
