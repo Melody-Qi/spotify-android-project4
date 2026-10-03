@@ -1,6 +1,12 @@
 package com.laioffer.spotify.ui.playlist
 
 import android.util.Log
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -28,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -40,6 +47,8 @@ import coil.request.ImageRequest
 import com.laioffer.spotify.R
 import com.laioffer.spotify.datamodel.Album
 import com.laioffer.spotify.datamodel.Song
+import com.laioffer.spotify.player.PlayerUiState
+import com.laioffer.spotify.player.PlayerViewModel
 
 /**
  * Lesson 57 - the playlist page, split into three stateless components exactly as the
@@ -57,17 +66,30 @@ import com.laioffer.spotify.datamodel.Song
  */
 
 @Composable
-fun PlaylistScreen(playlistViewModel: PlaylistViewModel) {
+fun PlaylistScreen(
+    playlistViewModel: PlaylistViewModel,
+    playerViewModel: PlayerViewModel
+) {
     // Lesson 57, screenshot 48: StateFlow -> Compose State, identical to HomeScreen.
     val playlistUiState by playlistViewModel.uiState.collectAsState()
 
+    // Lesson 60, screenshot 15: the player's state arrives the same way, so the
+    // playlist knows WHICH song is currently playing (green highlight).
+    val playerUiState by playerViewModel.uiState.collectAsState()
+
     // Lesson 58, screenshots 25: the tap event lands here and is FORWARDED to the
     // ViewModel - View layer only logs + delegates, no logic (the MVVM contract).
+    // Lesson 60, screenshot 15: tapping a song loads it into the player then plays.
     PlaylistScreenContent(
         playlistUiState = playlistUiState,
+        playerUiState = playerUiState,
         onTapFavorite = {
             Log.d("PlaylistScreen", "Tap favorite $it")
             playlistViewModel.toggleFavorite(it)
+        },
+        onTapSong = {
+            playerViewModel.load(it, playlistUiState.album)
+            playerViewModel.play()
         }
     )
 }
@@ -75,15 +97,20 @@ fun PlaylistScreen(playlistViewModel: PlaylistViewModel) {
 @Composable
 private fun PlaylistScreenContent(
     playlistUiState: PlaylistUiState,
-    onTapFavorite: (Boolean) -> Unit
+    playerUiState: PlayerUiState,
+    onTapFavorite: (Boolean) -> Unit,
+    onTapSong: (Song) -> Unit
 ) {
     Column(
         modifier = Modifier
             .padding(16.dp),
     ) {
+        // Lesson 61, "With rotation" - the Cover now also spins the record while
+        // the music plays, so it needs to know the playing flag as well.
         Cover(
             album = playlistUiState.album,
             isFavorite = playlistUiState.isFavorite,
+            isPlaying = playerUiState.isPlaying,
             onTapFavorite = onTapFavorite
         )
 
@@ -91,7 +118,12 @@ private fun PlaylistScreenContent(
         PlaylistHeader(album = playlistUiState.album)
 
         // Lesson 57, screenshots 63-66: the bottom component (song list).
-        PlaylistContent(playlist = playlistUiState.playlist)
+        // Lesson 60, screenshot 14: pass the current song + tap callback down.
+        PlaylistContent(
+            playlist = playlistUiState.playlist,
+            currentSong = playerUiState.song,
+            onTapSong = onTapSong
+        )
     }
 }
 
@@ -99,8 +131,36 @@ private fun PlaylistScreenContent(
 private fun Cover(
     album: Album,
     isFavorite: Boolean,
+    isPlaying: Boolean,
     onTapFavorite: (Boolean) -> Unit
 ) {
+    // Lesson 61, handout section "With rotation" / "Can Rotate with playing state":
+    // the vinyl record spins while the music plays and freezes when it does not.
+    //
+    // rememberInfiniteTransition() owns an animation that never ends on its own;
+    // animateFloat() describes ONE lap of it (0 -> -360 degrees in 5s, linear,
+    // restarting forever). The value is read as `rotationValue`.
+    val rotationAnimation = rememberInfiniteTransition(label = "vinylRotation")
+    val rotationValue by rotationAnimation.animateFloat(
+        initialValue = 0f,
+        targetValue = -360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 5000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "vinylRotationAngle"
+    )
+
+    // The whole trick in one line: the animation keeps running underneath, but we
+    // only SHOW it while playing. Note this is a plain `val`, not a `var by
+    // remember` - the handout's second version stores it in local state and only
+    // assigns when isPlaying, which cannot animate at all (a state write during
+    // composition is not a per-frame driver). Deriving the value keeps every
+    // frame flowing straight from the transition to graphicsLayer.
+    //
+    // Negative direction (-360) so it spins the same way a real record does.
+    val rotation = if (isPlaying) rotationValue else 0f
+
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -153,6 +213,9 @@ private fun Cover(
 
                 // Round album cover on top of the vinyl. Same UA-header fix as the home
                 // covers (Wikimedia 403 without a browser-like User-Agent).
+                // Lesson 61: graphicsLayer(rotationZ = rotation) is what actually turns
+                // the cover - it applies a 2D rotation without a real layout pass, so
+                // animating it costs far less than swapping in rotated drawables.
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(album.cover)
@@ -162,6 +225,7 @@ private fun Cover(
                     modifier = Modifier
                         .fillMaxWidth(0.6f)
                         .aspectRatio(1.0f)
+                        .graphicsLayer(rotationZ = rotation)
                         .align(Alignment.Center)
                         .clip(CircleShape),
                     contentScale = ContentScale.FillBounds
@@ -202,7 +266,9 @@ private fun PlaylistHeader(album: Album) {
 
 @Composable
 private fun PlaylistContent(
-    playlist: List<Song>
+    playlist: List<Song>,
+    currentSong: Song?,
+    onTapSong: (Song) -> Unit
 ) {
     // rememberLazyListState: survives recomposition, remembers the scroll position.
     val state = rememberLazyListState()
@@ -211,8 +277,14 @@ private fun PlaylistContent(
         // androidx.compose.foundation.lazy.items. Importing the WRONG items() (the
         // non-extension one) gives "Type mismatch: Required Int, Found List<Song>"
         // (screenshot 67), because that overload expects a count.
+        // Lesson 60, screenshot 13: a song is "the current one" when it equals
+        // playerUiState.song - that row renders green while playing.
         items(playlist) { song ->
-            Song(song, false)
+            Song(
+                song,
+                currentSong == song,
+                onTapSong
+            )
         }
 
         // A tail spacer so the last row can scroll clear of the bottom navigation bar.
@@ -223,10 +295,17 @@ private fun PlaylistContent(
 }
 
 @Composable
-private fun Song(song: Song, isPlaying: Boolean) {
+private fun Song(
+    song: Song,
+    isPlaying: Boolean,
+    onTapSong: (Song) -> Unit
+) {
     Row(
         modifier = Modifier
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .clickable {
+                onTapSong(song)
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         // weight(1f): the name/artist column takes all leftover width, pushing the
@@ -281,7 +360,9 @@ fun PlaylistScreenPreview() {
                     Song("Carousel", "Gary", "", "4:13")
                 )
             ),
-            onTapFavorite = { }
+            playerUiState = PlayerUiState(),
+            onTapFavorite = { },
+            onTapSong = { }
         )
     }
 }

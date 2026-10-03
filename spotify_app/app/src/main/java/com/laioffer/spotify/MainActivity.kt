@@ -3,6 +3,10 @@ package com.laioffer.spotify
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.darkColors
+import androidx.compose.ui.platform.ComposeView
+import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
@@ -10,6 +14,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.laioffer.spotify.database.DatabaseDao
 import com.laioffer.spotify.datamodel.Album
 import com.laioffer.spotify.network.NetworkApi
+import com.laioffer.spotify.player.PlayerBar
+import com.laioffer.spotify.player.PlayerViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -48,6 +54,13 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var databaseDao: DatabaseDao
 
+    // Lesson 61, screenshot 05 - the Activity injects the SAME PlayerViewModel
+    // the fragments use. `by viewModels()` here resolves to the Activity's
+    // ViewModelStore, which is exactly what `by activityViewModels()` in a
+    // Fragment resolves to as well - so the bar and the playlist page share one
+    // player and one state, and the bar keeps playing across navigation.
+    private val playerViewModel: PlayerViewModel by viewModels()
+
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,10 +75,25 @@ class MainActivity : AppCompatActivity() {
 
         // Known NavigationUI + BottomNavigationView quirk (the lesson links the same
         // StackOverflow thread): without this, re-selecting a tab can stack duplicates.
-        navView.setOnItemSelectedListener {
-            NavigationUI.onNavDestinationSelected(it, navController)
-            navController.popBackStack(it.itemId, inclusive = false)
-            true
+            navView.setOnItemSelectedListener {
+                NavigationUI.onNavDestinationSelected(it, navController)
+                navController.popBackStack(it.itemId, inclusive = false)
+                true
+            }
+
+        // Lesson 61, screenshot 05 - mount the floating player bar. findViewById
+        // returns the ComposeView declared in activity_main.xml, and setContent
+        // hands it the PlayerBar composable. darkColors() matches every other
+        // screen in the app.
+        val playerBar = findViewById<ComposeView>(R.id.player_bar)
+        playerBar.apply {
+            setContent {
+                MaterialTheme(colors = darkColors()) {
+                    PlayerBar(
+                        playerViewModel
+                    )
+                }
+            }
         }
 
         // Lesson 54/55 sanity check: does Hilt's NetworkApi really hit our Ktor backend?

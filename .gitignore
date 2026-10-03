@@ -11,6 +11,17 @@ l55_backend.png
 view_home.png
 view_home_v2.png
 
+# ---------- Reference downloads (not our code) ----------
+# Teacher's App template downloaded from Google Drive (2026-10-04). Kept locally
+# only for diffing against our own implementation; it is a separate project.
+# NOTE: the leading slash anchors this to the repo root. Without it the pattern
+# matches "spotify/" at ANY depth and would swallow our own package dir
+# com/laioffer/spotify/ (Windows gitignore matching is case-insensitive).
+/Spotify/
+
+# ---------- Ktor backend build output ----------
+spotify_backend/bin/
+
 # ---------- Android / Gradle ----------
 local.properties
 .gradle/

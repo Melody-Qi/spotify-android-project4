@@ -9,8 +9,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.laioffer.spotify.player.PlayerViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -33,6 +35,13 @@ class PlaylistFragment : Fragment() {
 
     private val viewModel: PlaylistViewModel by viewModels()
 
+    // Lesson 60, screenshots 16-17: the PLAYER must outlive this fragment - music
+    // keeps playing after navigating away. activityViewModels() scopes the
+    // PlayerViewModel to the parent ACTIVITY (shared by every fragment), while
+    // viewModels() would tie it to this fragment's lifecycle and kill playback
+    // when the fragment is destroyed.
+    private val playerViewModel: PlayerViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -43,7 +52,8 @@ class PlaylistFragment : Fragment() {
             setContent {
                 MaterialTheme(colors = darkColors()) {
                     PlaylistScreen(
-                        playlistViewModel = viewModel
+                        playlistViewModel = viewModel,
+                        playerViewModel = playerViewModel
                     )
                 }
             }

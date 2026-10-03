@@ -6,6 +6,12 @@
     3. BottomNavigationView                                -> the tabs
   The graph is attached in code (navController.setGraph(...)), so there is no
   app:navGraph attribute here - that is exactly how the lesson does it.
+
+  Lesson 61, screenshot 02 - the floating player bar. It goes INSIDE the
+  FrameLayout, as the LAST child so it draws on top of the NavHostFragment, and
+  with layout_gravity="bottom" so it hugs the bottom edge of the content area
+  (i.e. right above the bottom navigation). Putting it here rather than in each
+  Fragment is the whole point of the lesson: the bar must survive navigation.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -24,6 +30,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:defaultNavHost="true" />
+
+        <!-- Screenshot 02: the player bar host. android:name wires the ComposeView
+             up, R.id.player_bar is what MainActivity does findViewById on, and
+             the content itself is set in code with setContent { }. -->
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/player_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom" />
     </FrameLayout>
 
     <View

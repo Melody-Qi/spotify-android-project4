@@ -80,6 +80,10 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material:material")
     implementation("androidx.compose.foundation:foundation")
+    // Lesson 61 "X out button": Icons.Filled.Close, the built-in × vector used for the
+    // clear button of the floating player bar (no drawable asset of ours needed).
+    // Version comes from the Compose BOM above.
+    implementation("androidx.compose.material:material-icons-core")
     debugImplementation("androidx.compose.ui:ui-tooling")
 
     // ---------- Lesson 56: images inside Compose. coil-compose 2.2.2 brings coil core
@@ -114,6 +118,19 @@ dependencies {
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
+
+    // ---------- Lesson 60: ExoPlayer (media playback)
+    //   DIFFERENCE FROM THE HANDOUT (important): the lesson pins the legacy
+    //   "com.google.android.exoplayer2:exoplayer-core:2.18.2", but that artifact only
+    //   ever lived on jcenter/bintray, which Google shut down - it is NOT on
+    //   dl.google.com nor Maven Central anymore (verified 404 on both, 2026-10-01).
+    //   androidx.media3 is ExoPlayer's official successor (same team, same Player /
+    //   MediaItem / Player.Listener APIs, just a new package name), so we pin that.
+    val media3Version = "1.4.1"
+    implementation("androidx.media3:media3-exoplayer:$media3Version")
+    // OkHttp-backed DataSource so PlayerModule can bypass the emulator's system proxy
+    // for mp3 loading (see PlayerModule for the full explanation).
+    implementation("androidx.media3:media3-datasource-okhttp:$media3Version")
 
     testImplementation("junit:junit:4.13.2")
 }

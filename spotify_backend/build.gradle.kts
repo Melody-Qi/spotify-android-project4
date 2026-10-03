@@ -17,7 +17,11 @@ application {
 }
 
 kotlin {
-    jvmToolchain(17)
+    // NOTE (2026-10-04): was jvmToolchain(17). No JDK 17 is installed any more
+    // (only 21 at D:/Java/jdk-21, plus JDK 24 and the IDE's JBR 25), so Gradle
+    // failed with "No matching toolchains found for requested specification:
+    // {languageVersion=17...}". Raised to the JDK we actually have.
+    jvmToolchain(21)
 }
 
 repositories {
