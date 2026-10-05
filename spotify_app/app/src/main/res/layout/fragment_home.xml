@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  PREVIEW-ONLY layout, restored from _archive/home_lesson54_view/ (Lesson 54 XML era).
+
+  Since Lesson 56 the real HomeFragment no longer inflates XML - it returns a
+  ComposeView and builds the UI in Kotlin. This file exists ONLY so that the
+  navigation editor's canvas (nav_graph.xml, tools:layout="@layout/fragment_home")
+  has something to render for the homeFragment node, matching the teacher's
+  screenshot. It is never inflated at runtime; tools:* attributes are stripped
+  from the build anyway.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tv_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/home_loading"
+        android:textColor="@color/gray_60"
+        android:textSize="14sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_albums"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:layout_weight="1" />
+
+</LinearLayout>
