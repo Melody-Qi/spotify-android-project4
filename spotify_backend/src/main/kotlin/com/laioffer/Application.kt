@@ -26,7 +26,7 @@ data class Playlist(
 )
 
 fun main() {
-    // port / host exactly as in the lecture: 0.0.0.0:8080 (the emulator reaches it via 10.0.2.2:8080)
+    // port / host exactly as in the lecture: 0.0.0.0:8080
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
 }

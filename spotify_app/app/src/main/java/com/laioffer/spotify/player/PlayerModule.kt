@@ -32,6 +32,7 @@ object PlayerModule {
 
     @Provides
     @Singleton
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
     fun providesPlayer(@ApplicationContext context: Context): ExoPlayer {
         // LOCAL DEVIATION from the handout (2026-10-03): the emulator on this machine
         // has a GLOBAL http proxy (10.0.2.2:7890 -> Clash on the host) so that album
