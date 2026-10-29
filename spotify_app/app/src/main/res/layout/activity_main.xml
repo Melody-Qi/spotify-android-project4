@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Lesson 54, step 3 - the whole screen, three blocks top to bottom:
+  Lesson 54 - the whole screen, three blocks top to bottom:
     1. FrameLayout (weight=1) holding the NavHostFragment  -> the content area
     2. a 1dp divider
     3. BottomNavigationView                                -> the tabs
   The graph is attached in code (navController.setGraph(...)), so there is no
   app:navGraph attribute here - that is exactly how the lesson does it.
 
-  Lesson 61, screenshot 02 - the floating player bar. It goes INSIDE the
+  Lesson 61 - the floating player bar. It goes INSIDE the
   FrameLayout, as the LAST child so it draws on top of the NavHostFragment, and
   with layout_gravity="bottom" so it hugs the bottom edge of the content area
   (i.e. right above the bottom navigation). Putting it here rather than in each
@@ -15,10 +15,11 @@
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:fitsSystemWindows="true">
+    tools:context=".MainActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -32,7 +33,7 @@
             android:layout_height="match_parent"
             app:defaultNavHost="true" />
 
-        <!-- Screenshot 02: the player bar host. android:name wires the ComposeView
+        <!-- the player bar host. android:name wires the ComposeView
              up, R.id.player_bar is what MainActivity does findViewById on, and
              the content itself is set in code with setContent { }. -->
         <androidx.compose.ui.platform.ComposeView
